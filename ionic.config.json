@@ -1,0 +1,7 @@
+{
+  "name": "IonicShopList",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
