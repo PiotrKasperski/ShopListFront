@@ -11,6 +11,7 @@ import ProductModel from "../../models/ProductModel";
 import api from "../../Services/api";
 import ProductContainer from "./ProductContainer";
 
+import useProtectedApi from "../../hooks/useProtectedApi";
 interface Props {
   shopListID: number;
   isActive: boolean;
@@ -21,22 +22,21 @@ const ProdctListConteiner = (props: Props) => {
 
   const [isMounted, setIsMounted] = useState(props.isActive);
 
+  const { get, post, update, remove } = useProtectedApi();
   useEffect(() => {
     getProducts();
   }, [isMounted]);
 
   const getProducts = () => {
-    api
-      .get("items/findByShopID/?id=" + props.shopListID)
+    get("items/findByShopID/?id=" + props.shopListID)
       .then((response) => {
         console.log("getProductSuccess", response.data);
         setProducts(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
   const updateProduct = (newProduct: ProductModel) => {
-    api
-      .put("items/" + newProduct.itemID, newProduct)
+    update("items/" + newProduct.itemID, newProduct)
       .then((response) => {
         console.log(response.data);
         getProducts();
@@ -47,8 +47,8 @@ const ProdctListConteiner = (props: Props) => {
   };
   const addProduct = () => {
     console.log("shopListID", props);
-    api
-      .post("items/", { shopListID: props.shopListID })
+
+    post("items/", { shopListID: props.shopListID })
       .then((response) => {
         getProducts();
       })
@@ -58,8 +58,7 @@ const ProdctListConteiner = (props: Props) => {
   };
 
   const deleteProduct = (id: number) => {
-    api
-      .delete("items/" + id)
+    remove("items/" + id)
       .then((response) => {
         console.log("delete response:", response.data);
         setProducts([]); //TODO change to not refresh whole list
@@ -112,8 +111,8 @@ const ProdctListConteiner = (props: Props) => {
           {isMounted ? (
             <IonIcon icon={arrowUpOutline} />
           ) : (
-            <IonIcon icon={arrowDownOutline} />
-          )}
+              <IonIcon icon={arrowDownOutline} />
+            )}
         </IonButton>
         {isMounted ? (
           <IonButton

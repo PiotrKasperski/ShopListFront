@@ -24,8 +24,13 @@ function ShopListsContainer() {
   const [token, setToken] = useStorageItem("access_token");
   const { get } = useProtectedApi();
   useEffect(() => {
-    getShopLists().then((response)=>{setShopLists(response);});
-  });
+    const effect = async () =>
+      getShopLists().then((response) => {
+        console.log(response);
+        setShopLists(response);
+      });
+    effect();
+  }, []);
 
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -35,7 +40,8 @@ function ShopListsContainer() {
     console.log("token from container", token);
     return await get("shop-lists/")
       .then((respone) => {
-        return respone.data})
+        return respone.data;
+      })
       .catch((error) => {
         console.log(error);
       });

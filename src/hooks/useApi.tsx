@@ -10,9 +10,6 @@ const useApi = (): crudInterface => {
   const post = useCallback(async (url: string, data: any) => {
     return await api.post(url, data);
   }, []);
-  const api = axios.create({
-    baseURL: "http://localhost:3000/",
-  });
   return { post, api };
 };
 export default useApi;

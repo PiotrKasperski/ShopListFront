@@ -51,7 +51,6 @@ const App: React.FC = () => {
             <IonButton href="/">
               <IonIcon icon={basketOutline} size="large" />
             </IonButton>
-
             Listy zakupów
           </IonTitle>
           {token !== null ? (
@@ -63,8 +62,8 @@ const App: React.FC = () => {
               logout
             </IonButton>
           ) : (
-            <IonButton href="/users">login</IonButton>
-          )}
+              <IonButton href="/users">login</IonButton>
+            )}
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -75,7 +74,7 @@ const App: React.FC = () => {
           </IonRouterOutlet>
           {/* <UserComponent /> */}
           {/* <LoginComponent /> */}
-          {/* {token ? <ShopListsContainer /> : <UserComponent />} */}
+          {token ? <ShopListsContainer /> : <UserComponent />}
         </IonReactRouter>
       </IonContent>
     </IonApp>
