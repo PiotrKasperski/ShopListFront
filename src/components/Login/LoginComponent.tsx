@@ -13,13 +13,14 @@ import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 import UserModel from "../../models/UserModel";
 
-const LoginComponent = () => {
+type LoginComponentProps = { onToken: (token: string) => void };
+const LoginComponent = ({ onToken }: LoginComponentProps) => {
   const [user, setUser] = useState<UserModel>({
     name: null,
     userID: null,
     token: null,
   });
-  const histyory = useHistory();
+  const history = useHistory();
   const { login } = useAuth();
   const logine = () => {
     login(user.name || "", user.token || "").then((response) => {
@@ -28,7 +29,8 @@ const LoginComponent = () => {
         userID: user.userID,
         token: response,
       });
-      histyory.push("/dashboard");
+      onToken(response);
+      history.push("/");
     });
   };
   return (

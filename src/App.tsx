@@ -38,11 +38,15 @@ import ShopListsContainer from "./components/ShopLists/ShopListsContainer";
 import { basketOutline } from "ionicons/icons";
 import LoginComponent from "./components/Login/LoginComponent";
 import UserComponent from "./components/Login/UserComponent";
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import { useStorageItem } from "@capacitor-community/react-hooks/storage";
 import RegistrationComponent from "./components/Login/RegistrationComponent";
 
 const App: React.FC = () => {
   const [token, setToken] = useStorageItem("access_token");
+  const onToken = (token: string) => {
+    setToken(token);
+  };
   return (
     <IonApp>
       <IonHeader color="primary">
@@ -69,12 +73,18 @@ const App: React.FC = () => {
       <IonContent>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/dashboard" component={ShopListsContainer} exact />
-            <Route path="/users" component={UserComponent} exact />
+            <Route path="/dashboard">
+              <PrivateRoute token={token as string}>
+                <ShopListsContainer />
+              </PrivateRoute>
+            </Route>
+            <Route path="/users">
+              <UserComponent onToken={onToken} />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/dashboard" />
+            </Route>
           </IonRouterOutlet>
-          {/* <UserComponent /> */}
-          {/* <LoginComponent /> */}
-          {token ? <ShopListsContainer /> : <UserComponent />}
         </IonReactRouter>
       </IonContent>
     </IonApp>

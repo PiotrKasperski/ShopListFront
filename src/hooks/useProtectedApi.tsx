@@ -13,42 +13,31 @@ interface crudInterface {
   remove: (url: string) => Promise<any>;
 }
 const useProtectedApi = (): crudInterface => {
-  const [token, setToken] = useStorageItem("access_token");
+  const storage = useStorage();
+  //const token = async () => await storage.get("access_token");
   const { api } = useApi();
-  const [headers, setHeaders] = useState({
-    headers: {
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Imtsb25layIsInVzZXJJRCI6MiwiaWF0IjoxNzIzNjU2NTY5LCJleHAiOjE3MzIyOTY1Njl9.oqpiipDBLv6kqQaU3yWltxLDrPRLprTvxBM1No-7r_U`,
-    },
-  });
 
-  useEffect(() => {
-    const effect = async () => {
-      console.log("effect token", token);
-      await updateheaders();
+  const getHeaders = async () => {
+    return {
+      Authorization: `Bearer ${await storage.get("access_token")}`,
     };
-    effect();
-  }, []);
-  const updateheaders = async () => {
-    setHeaders({
-      headers: { Authorization: `Bearer ${token}` },
-    });
   };
   const post = useCallback(async (url: string, data: any) => {
-    console.log(headers.headers);
-    console.log("post token", token);
-    return await api.post(url, data, headers);
+    return await api.post(url, data, { headers: await getHeaders() });
   }, []);
 
   const get = useCallback(async (url: string) => {
-    console.log(headers);
-    return await api.get(url, headers);
+    return await api.get(url, { headers: await getHeaders() });
   }, []);
+
   const update = useCallback(async (url: string, data: any) => {
-    return await api.put(url, data, headers);
+    return await api.put(url, data, { headers: await getHeaders() });
   }, []);
+
   const remove = useCallback(async (url: string) => {
-    return await api.delete(url, headers);
+    return await api.delete(url, { headers: await getHeaders() });
   }, []);
+
   return { post, get, update, remove };
 };
 export default useProtectedApi;

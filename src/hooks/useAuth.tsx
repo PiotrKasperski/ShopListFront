@@ -1,4 +1,7 @@
-import { useStorageItem } from "@capacitor-community/react-hooks/storage";
+import {
+  useStorage,
+  useStorageItem,
+} from "@capacitor-community/react-hooks/storage";
 import { useCallback } from "react";
 import UserModel from "../models/UserModel";
 import useApi from "./useApi";
@@ -11,28 +14,33 @@ interface AuthResults {
 }
 
 const useAuth = () => {
-  const [starageToken, setToken] = useStorageItem("access_token");
+  const { get, set, remove, getKeys, clear } = useStorage();
   const { post } = useApi();
+  const token = async () => await get("access_token");
+  const setToken = async (token: string) => await set("access_token", token);
   const isLogged = useCallback(async () => {
-    return (await starageToken) !== null;
+    return (await token) !== null;
   }, []);
   const login = useCallback(async (name: string, password: string) => {
     const response = await post("users/login/", {
       userName: name,
       password: password,
     });
-    await setToken(response.data.access_token);
+    console.log("response token", response.data.access_token);
+    await set("access_token", response.data.access_token);
+    console.log("saved_token", await get("access_token"));
+
     return response.data.access_token;
   }, []);
   const logout = useCallback(async () => {
-    await setToken(null);
+    await setToken("");
     return "success";
   }, []);
-  const token = useCallback(async () => {
-    return await starageToken;
+  const getToken = useCallback(async () => {
+    return await token;
   }, []);
   const register = useCallback(async (name: string, password: string) => {
-    const response = await post("user/register", {
+    const response = await post("users/register", {
       userName: name,
       password: password,
     });

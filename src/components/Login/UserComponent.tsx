@@ -8,21 +8,22 @@ import {
   IonTabButton,
   IonTabs,
 } from "@ionic/react";
+import { type } from "os";
 import React from "react";
 import { Redirect, Route } from "react-router";
 import LoginComponent from "./LoginComponent";
 import RegistrationComponent from "./RegistrationComponent";
-
-const UserComponent = () => {
+type UserComponentProps = { onToken: (token: string) => void };
+const UserComponent = ({ onToken }: UserComponentProps) => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path="/users/login" component={LoginComponent} exact={true} />
-        <Route
-          path="/users/registration"
-          component={RegistrationComponent}
-          exact={true}
-        />
+        <Route path="/users/login">
+          <LoginComponent onToken={onToken} />
+        </Route>
+        <Route path="/users/registration">
+          <RegistrationComponent onToken={onToken} />
+        </Route>
         <Route
           path="/users"
           render={() => <Redirect to="/users/login" />}
@@ -31,10 +32,10 @@ const UserComponent = () => {
       </IonRouterOutlet>
       <IonTabBar slot="top">
         <IonTabButton tab="login" href="/users/login">
-          <IonLabel>Login</IonLabel>
+          <IonLabel>Logowanie</IonLabel>
         </IonTabButton>
         <IonTabButton tab="registrartion" href="/users/registration">
-          <IonLabel>registration</IonLabel>
+          <IonLabel>Rejestracja</IonLabel>
         </IonTabButton>
       </IonTabBar>
     </IonTabs>
