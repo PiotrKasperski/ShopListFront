@@ -7,7 +7,7 @@ import {
   IonList,
   IonPage,
 } from "@ionic/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Dispatch, useCallback, useEffect, useState } from "react";
 import ShopListContainer from "./ShopListContainer";
 import api from "../../Services/api";
 import { add } from "ionicons/icons";
@@ -20,6 +20,9 @@ import useProtectedApi from "../../hooks/useProtectedApi";
 import ShopListModel from "../../models/ShopListsModel";
 
 function ShopListsContainer() {
+  const lists: Array<
+    [ShopListModel, React.Dispatch<React.SetStateAction<ShopListModel>>]
+  > = [[...useState<ShopListModel>({} as ShopListModel)]];
   const [shopLists, setShopLists] = useState<ShopListModel[]>([]);
   const [token, setToken] = useStorageItem("access_token");
   const { get } = useProtectedApi();
@@ -27,10 +30,14 @@ function ShopListsContainer() {
     const effect = async () =>
       getShopLists().then((response) => {
         console.log("getShopLists success");
-        setShopLists(response);
       });
     effect();
   }, []);
+  useEffect(() => {
+    const effect = async () => console.log("getShopLists success");
+    console.log(shopLists);
+    effect();
+  }, [shopLists]);
 
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -38,8 +45,10 @@ function ShopListsContainer() {
 
   const getShopLists = async () => {
     return await get("shop-lists/")
-      .then((respone) => {
-        return respone.data;
+      .then((response) => {
+        console.log(response.data);
+        setShopLists((list) => response.data);
+        return response.data;
       })
       .catch((error) => {
         console.log(error);
@@ -56,17 +65,22 @@ function ShopListsContainer() {
         console.log(error);
       });
   };
+  const onDeleteList = (shopList: ShopListModel): void => {
+    setShopLists((shopListsState) => {
+      return shopListsState.splice(shopListsState.indexOf(shopList), 1);
+    });
+  };
   return (
     <IonPage>
       <IonContent>
         <IonList>
           {shopLists.map((shopList) => {
+            console.log(shopList);
             return (
               <ShopListContainer
                 shopList={shopList}
-                onDelete={() => {
-                  setShopLists([]);
-                  getShopLists();
+                onDelete={(shopList) => {
+                  onDeleteList(shopList);
                 }}
               />
             );

@@ -24,15 +24,17 @@ import {
   thermometerOutline,
 } from "ionicons/icons";
 import React, { createRef, useEffect, useRef, useState } from "react";
+import useProtectedApi from "../../hooks/useProtectedApi";
 import ShopListModel from "../../models/ShopListsModel";
 import api from "../../Services/api";
 import ProductListcontainer from "../ProductList/ProdctListConteiner";
 
 interface Props {
   shopList: ShopListModel;
-  onDelete: () => void;
+  onDelete: (shopList: ShopListModel) => void;
 }
 function ShopListContainer(props: Props) {
+  const { remove } = useProtectedApi();
   const [shopList, setShopList] = useState(props.shopList);
   const [isActive, setActive] = useState(true);
   const [popoverState, setShowPopover] = useState({
@@ -41,11 +43,10 @@ function ShopListContainer(props: Props) {
   });
 
   const handleDeleteListButtonClick = () => {
-    api
-      .delete("shop-lists/" + shopList.shopListID)
+    remove("shop-lists/" + shopList.shopListID)
       .then((response) => {
-        console.log(response.data);
-        props.onDelete();
+        console.log("removed shop list", response.data);
+        props.onDelete(shopList);
       })
       .catch((error) => {
         console.log(error);
