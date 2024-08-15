@@ -63,10 +63,10 @@ const App: React.FC = () => {
                 setToken(null);
               }}
             >
-              logout
+              Wyloguj
             </IonButton>
           ) : (
-              <IonButton href="/users">login</IonButton>
+              <IonButton href="/users">Zaloguj</IonButton>
             )}
         </IonToolbar>
       </IonHeader>

@@ -17,16 +17,16 @@ import {
   useStorageItem,
 } from "@capacitor-community/react-hooks/storage";
 import useProtectedApi from "../../hooks/useProtectedApi";
+import ShopListModel from "../../models/ShopListsModel";
 
 function ShopListsContainer() {
-  const [shopLists, setShopLists] = useState([]);
-  const [newList, setNewList] = useState("");
+  const [shopLists, setShopLists] = useState<ShopListModel[]>([]);
   const [token, setToken] = useStorageItem("access_token");
   const { get } = useProtectedApi();
   useEffect(() => {
     const effect = async () =>
       getShopLists().then((response) => {
-        console.log(response);
+        console.log("getShopLists success");
         setShopLists(response);
       });
     effect();
@@ -37,7 +37,6 @@ function ShopListsContainer() {
   };
 
   const getShopLists = async () => {
-    console.log("token from container", token);
     return await get("shop-lists/")
       .then((respone) => {
         return respone.data;
@@ -50,7 +49,8 @@ function ShopListsContainer() {
     api
       .post("shop-lists/", { name: newShopListName }, config)
       .then((response) => {
-        console.log(response);
+        setShopLists([...shopLists, { ...response.data }]);
+        console.log("add shop list response", response);
       })
       .catch((error) => {
         console.log(error);
