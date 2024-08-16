@@ -1,76 +1,62 @@
-import { useStorageItem } from "@capacitor-community/react-hooks/storage";
 import {
   IonButton,
   IonContent,
   IonInput,
   IonItem,
   IonLabel,
-  IonPage,
 } from "@ionic/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useHistory } from "react-router";
-import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 import UserModel from "../../models/UserModel";
 
 type LoginComponentProps = { onToken: (token: string) => void };
+
 const LoginComponent = ({ onToken }: LoginComponentProps) => {
-  const [user, setUser] = useState<UserModel>({
+  const [credentials, setCredentials] = useState<UserModel>({
     name: null,
     userID: null,
     token: null,
   });
   const history = useHistory();
   const { login } = useAuth();
-  const logine = () => {
-    login(user.name || "", user.token || "").then((response) => {
-      setUser({
-        name: user.name,
-        userID: user.userID,
-        token: response,
-      });
-      onToken(response);
+  const passwordInputRef = useRef<HTMLIonInputElement>(null);
+
+  const handleLogin = () =>
+    login(credentials.name || "", credentials.token || "").then((token) => {
+      setCredentials((prev) => ({ ...prev, token }));
+      onToken(token);
       history.push("/");
     });
-  };
+
   return (
     <IonContent>
       <IonItem>
-        <IonLabel>Nazwa użytkownika</IonLabel>
+        <IonLabel>Username</IonLabel>
         <IonInput
           type="text"
-          onIonChange={(e) => {
-            setUser({
-              name: e.detail.value!,
-              token: user.token,
-              userID: user.userID,
-            });
-          }}
+          onIonChange={(e) =>
+            setCredentials((prev) => ({ ...prev, name: e.detail.value! }))
+          }
+          onKeyDown={(e) =>
+            e.key === "Enter" && passwordInputRef.current?.setFocus()
+          }
         />
       </IonItem>
       <IonItem>
-        <IonLabel>Hasło</IonLabel>
+        <IonLabel>Password</IonLabel>
         <IonInput
           type="password"
-          onIonChange={(e) => {
-            setUser({
-              name: user.name,
-              token: e.detail.value!,
-              userID: user.userID,
-            });
-          }}
+          ref={passwordInputRef}
+          onIonChange={(e) =>
+            setCredentials((prev) => ({ ...prev, token: e.detail.value! }))
+          }
+          onKeyDown={(e) => e.key === "Enter" && handleLogin()}
         />
       </IonItem>
-      <IonItem>
-        <IonButton
-          onClick={() => {
-            logine();
-          }}
-        >
-          Login
-        </IonButton>
-      </IonItem>
+      <IonButton onClick={handleLogin}>Login</IonButton>
     </IonContent>
   );
 };
+
 export default LoginComponent;
