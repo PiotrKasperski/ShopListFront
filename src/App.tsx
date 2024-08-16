@@ -51,14 +51,11 @@ const App: React.FC = () => {
     <IonApp>
       <IonHeader color="primary">
         <IonToolbar color="primary">
-          <IonTitle>
-            <IonButton href="/">
-              <IonIcon icon={basketOutline} size="large" />
-            </IonButton>
-            Listy zakupów
-          </IonTitle>
+          <IonIcon slot="start" icon={basketOutline} size="large" />
+          <IonTitle>Listy zakupów</IonTitle>
           {token !== null ? (
             <IonButton
+              slot="end"
               onClick={() => {
                 setToken(null);
               }}
