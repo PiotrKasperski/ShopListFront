@@ -27,6 +27,7 @@ function ShopListsContainer() {
     setShopLists((lists) => lists.filter((item) => item !== shopList));
 
   return (
+    <IonPage>
       <IonContent>
         <IonList>
           {shopLists.map((shopList) => (
@@ -39,7 +40,7 @@ function ShopListsContainer() {
         </IonList>
       </IonContent>
       <AddShopListFab onAddListClick={(name) => addNewShopList(name)} />
-    </IonPage >
+    </IonPage>
   );
 }
 
