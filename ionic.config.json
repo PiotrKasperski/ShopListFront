@@ -1,7 +1,7 @@
 {
-  "name": "IonicShopList",
+  "name": "ShopListFront",
   "integrations": {
     "capacitor": {}
   },
-  "type": "react"
+  "type": "react-vite"
 }

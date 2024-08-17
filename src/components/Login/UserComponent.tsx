@@ -15,11 +15,14 @@ import LoginComponent from "./LoginComponent";
 import RegistrationComponent from "./RegistrationComponent";
 type UserComponentProps = { onToken: (token: string) => void };
 const UserComponent = ({ onToken }: UserComponentProps) => {
+  if (typeof onToken !== "function") {
+    throw new Error("setToken must be a function");
+  }
   return (
     <IonTabs>
       <IonRouterOutlet>
         <Route path="/users/login">
-          <LoginComponent onToken={onToken} />
+          <LoginComponent setToken={onToken} />
         </Route>
         <Route path="/users/registration">
           <RegistrationComponent onToken={onToken} />

@@ -1,7 +1,8 @@
 import {
   useStorage,
   useStorageItem,
-} from "@capacitor-community/react-hooks/storage";
+  availableFeatures,
+} from "@capacitor-community/storage-react";
 import { useCallback } from "react";
 import UserModel from "../models/UserModel";
 import useApi from "./useApi";

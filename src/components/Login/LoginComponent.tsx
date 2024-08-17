@@ -9,10 +9,18 @@ import { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import UserModel from "../../models/UserModel";
+import {
+  useStorageItem,
+  availableFeatures,
+} from "@capacitor-community/storage-react";
+import "./LoginComponent.css";
 
-type LoginComponentProps = { onToken: (token: string) => void };
+type LoginComponentProps = { setToken: (token: string) => void };
 
-const LoginComponent = ({ onToken }: LoginComponentProps) => {
+const LoginComponent = ({ setToken }: LoginComponentProps) => {
+  if (typeof setToken !== "function") {
+    throw new Error("setToken must be a function");
+  }
   const [credentials, setCredentials] = useState<UserModel>({
     name: null,
     userID: null,
@@ -25,14 +33,14 @@ const LoginComponent = ({ onToken }: LoginComponentProps) => {
   const handleLogin = () =>
     login(credentials.name || "", credentials.token || "").then((token) => {
       setCredentials((prev) => ({ ...prev, token }));
-      onToken(token);
+      setToken(token);
       history.push("/");
     });
 
   return (
     <IonContent>
       <IonItem>
-        <IonLabel>Username</IonLabel>
+        <IonLabel class="padding_right">Username</IonLabel>
         <IonInput
           type="text"
           onIonChange={(e) =>
@@ -44,7 +52,7 @@ const LoginComponent = ({ onToken }: LoginComponentProps) => {
         />
       </IonItem>
       <IonItem>
-        <IonLabel>Password</IonLabel>
+        <IonLabel class="padding_right">Password</IonLabel>
         <IonInput
           type="password"
           ref={passwordInputRef}
@@ -54,7 +62,7 @@ const LoginComponent = ({ onToken }: LoginComponentProps) => {
           onKeyDown={(e) => e.key === "Enter" && handleLogin()}
         />
       </IonItem>
-      <IonButton onClick={handleLogin}>Login</IonButton>
+      <IonButton onClick={handleLogin}>Zaloguj</IonButton>
     </IonContent>
   );
 };

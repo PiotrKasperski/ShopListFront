@@ -1,10 +1,10 @@
-import {
-  useStorage,
-  useStorageItem,
-} from "@capacitor-community/react-hooks/storage";
 import { useCallback, useEffect, useState } from "react";
 import useApi from "./useApi";
 import useAuth from "./useAuth";
+import {
+  availableFeatures,
+  useStorage,
+} from "@capacitor-community/storage-react";
 
 interface crudInterface {
   post: (url: string, data: any) => Promise<any>;
