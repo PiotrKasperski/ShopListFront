@@ -8,6 +8,7 @@ import {
   IonIcon,
   IonRouterOutlet,
   IonTitle,
+  IonToast,
   IonToolbar,
   setupIonicReact,
 } from "@ionic/react";
@@ -36,6 +37,7 @@ setupIonicReact();
 
 const App: React.FC = () => {
   const [token, setToken] = useStorageItem<string | null>("access_token");
+  const [showToast, setShowToast] = useState(false);
   const { get } = useStorage();
 
   useEffect(() => {
@@ -48,9 +50,9 @@ const App: React.FC = () => {
     if (StatusBar) {
       StatusBar.setStyle({
         style: StatusBarStyle.Dark,
-      });
+      }).catch(console.log);
       StatusBar.setOverlaysWebView({ overlay: true }).catch(console.log);
-      StatusBar.hide();
+      StatusBar.hide().catch(console.log);
     }
 
     if (!token) initializeToken();
@@ -61,6 +63,9 @@ const App: React.FC = () => {
   }, [token]);
 
   const handleTokenUpdate = (newToken: string) => setToken(newToken);
+  const handleOnRedirect = () => {
+    setShowToast(true);
+  };
 
   return (
     <IonApp>
@@ -80,10 +85,23 @@ const App: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        (
+        {showToast && (
+          <IonToast
+            isOpen={showToast}
+            onDidDismiss={() => setShowToast(false)}
+            message="Przed skorzystaniem należy się zalogować"
+            duration={2000}
+          />
+        )}
+        )
         <IonReactRouter>
           <IonRouterOutlet>
             <Route path="/dashboard">
-              <PrivateRoute token={token || ""}>
+              <PrivateRoute
+                token={token || ""}
+                onRedirect={() => handleOnRedirect()}
+              >
                 <ShopListsContainer />
               </PrivateRoute>
             </Route>
