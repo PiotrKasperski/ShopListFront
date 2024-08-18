@@ -42,6 +42,7 @@ const LoginComponent = ({ setToken }: LoginComponentProps) => {
       <IonItem>
         <IonLabel class="padding_right">Username</IonLabel>
         <IonInput
+          data-testid="username-input"
           type="text"
           onIonChange={(e) =>
             setCredentials((prev) => ({ ...prev, name: e.detail.value! }))
@@ -54,6 +55,7 @@ const LoginComponent = ({ setToken }: LoginComponentProps) => {
       <IonItem>
         <IonLabel class="padding_right">Password</IonLabel>
         <IonInput
+          data-testid="password-input"
           type="password"
           ref={passwordInputRef}
           onIonChange={(e) =>

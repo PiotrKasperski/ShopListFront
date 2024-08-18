@@ -11,68 +11,52 @@ import {
 import { trash } from "ionicons/icons";
 import React, { useState } from "react";
 import ProductModel from "../../models/ProductModel";
-import api from "../../Services/api";
+
 interface Props {
   product: ProductModel;
   onDelete: (id: number) => void;
-  onChange: (newProduct: ProductModel) => void;
+  onChange: (updatedProduct: ProductModel) => void;
 }
 
-function ProductContainer(props: Props) {
-  const [product, setProduct] = useState(props.product);
+const ProductContainer: React.FC<Props> = ({ product, onDelete, onChange }) => {
+  const [currentProduct, setCurrentProduct] = useState(product);
 
-  const handleNameChange = (name: string) => {
-    product.productName = name;
-    setProduct(product);
-    props.onChange(product);
-  };
-  const handleCountChange = (count: number) => {
-    product.count = count;
-    setProduct(product);
-    props.onChange(product);
+  const updateProduct = (field: keyof ProductModel, value: any) => {
+    const updatedProduct = { ...currentProduct, [field]: value };
+    setCurrentProduct(updatedProduct);
+    onChange(updatedProduct);
   };
 
-  const handleCheckedChange = (isChecked: boolean) => {
-    product.isChecked = isChecked;
-    setProduct(product);
-    props.onChange(product);
-  };
-
-  const handleDeleteButtonClick = () => {
-    props.onDelete(product.itemID);
-  };
   return (
     <IonItemSliding>
       <IonItem>
         <IonInput
-          value={product.productName}
+          data-testid="product-name-input"
+          value={currentProduct.productName}
           placeholder="Produkt"
-          onIonChange={(e) => {
-            handleNameChange(e.detail.value!);
-          }}
+          onIonChange={(e) => updateProduct("productName", e.detail.value!)}
           type="text"
         />
         <IonLabel>Ilość:</IonLabel>
         <IonInput
+          data-testid="product-count-input"
           maxlength={3}
-          value={product.count}
-          onIonChange={(e) => {
-            handleCountChange(parseInt(e.detail.value!));
-          }}
+          value={currentProduct.count}
+          onIonChange={(e) =>
+            updateProduct("count", parseInt(e.detail.value!, 10))
+          }
           type="number"
         />
         <IonCheckbox
-          onIonChange={(e) => {
-            handleCheckedChange(e.detail.checked);
-          }}
-          checked={product.isChecked}
+          data-testid="product-checkbox"
+          checked={currentProduct.isChecked}
+          onIonChange={(e) => updateProduct("isChecked", e.detail.checked)}
         />
       </IonItem>
       <IonItemOptions side="end">
         <IonItemOption
-          onClick={() => {
-            handleDeleteButtonClick();
-          }}
+          data-testid="delete-btn"
+          onClick={() => onDelete(currentProduct.itemID)}
           color="danger"
           expandable
         >
@@ -81,6 +65,6 @@ function ProductContainer(props: Props) {
       </IonItemOptions>
     </IonItemSliding>
   );
-}
+};
 
 export default ProductContainer;

@@ -36,6 +36,7 @@ const RegistrationComponent = ({ onToken }: RegistrationComponentProps) => {
       <IonItem>
         <IonLabel>Nazwa użytkownika</IonLabel>
         <IonInput
+          data-testid="username-input"
           type="text"
           onIonChange={(e) => {
             setUser({
@@ -49,6 +50,7 @@ const RegistrationComponent = ({ onToken }: RegistrationComponentProps) => {
       <IonItem>
         <IonLabel>Hasło</IonLabel>
         <IonInput
+          data-testid="password-input"
           type="password"
           onIonChange={(e) => {
             setUser({

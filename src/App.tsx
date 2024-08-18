@@ -37,14 +37,12 @@ setupIonicReact();
 const App: React.FC = () => {
   const [token, setToken] = useStorageItem<string | null>("access_token");
   const { get } = useStorage();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initializeToken = async () => {
       const storedToken = await get("access_token");
       console.log("Initial token:", storedToken);
       if (storedToken) setToken(storedToken);
-      setIsLoading(false);
     };
 
     if (StatusBar) {
@@ -63,8 +61,6 @@ const App: React.FC = () => {
   }, [token]);
 
   const handleTokenUpdate = (newToken: string) => setToken(newToken);
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <IonApp>

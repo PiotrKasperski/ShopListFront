@@ -1,6 +1,5 @@
 import {
   IonButton,
-  IonContent,
   IonFab,
   IonFabButton,
   IonIcon,
@@ -11,56 +10,51 @@ import {
   IonPage,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
-import { on } from "process";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+
 interface Props {
-  onAddListClick: (string: string) => void;
+  onAddListClick: (listName: string) => void;
 }
 
-const AddShopListFab = (props: Props) => {
+const AddShopListFab: React.FC<Props> = ({ onAddListClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [newShopListName, setNewShopListName] = useState("");
-  useEffect(() => {
-    setIsModalOpen(false);
-  });
-  const changeShowModal = (isOpen: boolean) => {
-    setIsModalOpen(isOpen);
-  };
+
   const handleAddListClick = () => {
-    props.onAddListClick(newShopListName);
-    setShowModal(false);
-    setNewShopListName("");
+    if (newShopListName.trim()) {
+      onAddListClick(newShopListName);
+      setIsModalOpen(false);
+      setNewShopListName("");
+    }
   };
+
   return (
     <div>
-      <IonFab vertical="bottom" horizontal="end">
+      <IonFab vertical="bottom" horizontal="end" slot="fixed">
         <IonFabButton
-          onClick={() => {
-            setShowModal(true);
-          }}
+          data-testid="open-modal-btn"
+          onClick={() => setIsModalOpen(true)}
         >
           <IonIcon icon={add} />
         </IonFabButton>
-
-        <IonModal isOpen={showModal}>
-          <IonPage>
-            <IonItem>
-              <IonLabel>Nazwa nowej listy: </IonLabel>
-              <IonInput
-                value={newShopListName}
-                placeholder="Nazwa nowej listy"
-                onIonChange={(e) => {
-                  setNewShopListName(e.detail.value!);
-                }}
-              />
-            </IonItem>
-            <IonButton onClick={() => handleAddListClick()}>
-              Dodaj liste
-            </IonButton>
-          </IonPage>
-        </IonModal>
       </IonFab>
+
+      <IonModal isOpen={isModalOpen} onDidDismiss={() => setIsModalOpen(false)}>
+        <IonPage>
+          <IonItem>
+            <IonLabel>Nazwa nowej listy:</IonLabel>
+            <IonInput
+              data-testid="shoplist-input"
+              value={newShopListName}
+              placeholder="Wprowadź nazwę"
+              onIonChange={(e) => setNewShopListName(e.detail.value!)}
+            />
+          </IonItem>
+          <IonButton data-testid="add-list-btn" onClick={handleAddListClick}>
+            Dodaj listę
+          </IonButton>
+        </IonPage>
+      </IonModal>
     </div>
   );
 };

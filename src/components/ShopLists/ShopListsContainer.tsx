@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IonContent, IonList, IonPage } from "@ionic/react";
 import ShopListContainer from "./ShopListContainer";
-import api from "../../Services/api";
-import { useStorageItem } from "@capacitor-community/react-hooks/storage";
 import useProtectedApi from "../../hooks/useProtectedApi";
 import AddShopListFab from "./AddShopListFab";
 import ShopListModel from "../../models/ShopListsModel";
@@ -16,7 +14,6 @@ function ShopListsContainer() {
       .then(({ data }) => setShopLists(data))
       .catch(console.log);
   }, [get]);
-  useEffect(() => console.log("Updated shopLists:", shopLists), [shopLists]);
 
   const addNewShopList = async (name: string) =>
     post("shop-lists/", { name })
@@ -27,19 +24,23 @@ function ShopListsContainer() {
     setShopLists((lists) => lists.filter((item) => item !== shopList));
 
   return (
-    <IonPage>
+    <IonPage data-testid="shop-lists-page">
       <IonContent>
-        <IonList>
+        <IonList data-testid="shop-lists">
           {shopLists.map((shopList) => (
             <ShopListContainer
               key={shopList.shopListID}
               shopList={shopList}
               onDelete={() => onDeleteList(shopList)}
+              data-testid={`shop-list-container-${shopList.shopListID}`}
             />
           ))}
         </IonList>
       </IonContent>
-      <AddShopListFab onAddListClick={(name) => addNewShopList(name)} />
+      <AddShopListFab
+        onAddListClick={(name) => addNewShopList(name)}
+        data-testid="add-shop-list-fab"
+      />
     </IonPage>
   );
 }

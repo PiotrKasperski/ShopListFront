@@ -8,127 +8,88 @@ import {
 import { addOutline, arrowDownOutline, arrowUpOutline } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import ProductModel from "../../models/ProductModel";
-import api from "../../Services/api";
+import useProtectedApi from "../../hooks/useProtectedApi";
 import ProductContainer from "./ProductContainer";
 
-import useProtectedApi from "../../hooks/useProtectedApi";
 interface Props {
   shopListID: number;
   isActive: boolean;
 }
 
-const ProdctListConteiner = (props: Props) => {
-  const [products, setProducts] = useState([]);
-
-  const [isMounted, setIsMounted] = useState(props.isActive);
-
+const ProductListContainer: React.FC<Props> = ({ shopListID, isActive }) => {
+  const [products, setProducts] = useState<ProductModel[]>([]);
+  const [isExpanded, setIsExpanded] = useState(isActive);
   const { get, post, update, remove } = useProtectedApi();
+
   useEffect(() => {
-    getProducts();
-  }, [isMounted]);
+    if (isExpanded) {
+      fetchProducts();
+    }
+  }, [isExpanded]);
 
-  const getProducts = () => {
-    get("items/findByShopID/?id=" + props.shopListID)
-      .then((response) => {
-        console.log("getProductSuccess", response.data);
-        setProducts(response.data);
-      })
-      .catch((error) => { });
+  const fetchProducts = () => {
+    get(`items/findByShopID/?id=${shopListID}`)
+      .then(({ data }) => setProducts(data))
+      .catch((error) => console.error("Error fetching products:", error));
   };
-  const updateProduct = (newProduct: ProductModel) => {
-    update("items/" + newProduct.itemID, newProduct)
-      .then((response) => {
-        console.log(response.data);
-        getProducts();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+  const updateProduct = (updatedProduct: ProductModel) => {
+    update(`items/${updatedProduct.itemID}`, updatedProduct)
+      .then(() => fetchProducts())
+      .catch((error) => console.error("Error updating product:", error));
   };
+
   const addProduct = () => {
-    console.log("shopListID", props);
-
-    post("items/", { shopListID: props.shopListID })
-      .then((response) => {
-        getProducts();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    post("items/", { shopListID })
+      .then(() => fetchProducts())
+      .catch((error) => console.error("Error adding product:", error));
   };
 
   const deleteProduct = (id: number) => {
-    remove("items/" + id)
-      .then((response) => {
-        console.log("delete response:", response.data);
-        setProducts([]); //TODO change to not refresh whole list
-        getProducts();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const handleAddProductClick = () => {
-    addProduct();
-  };
-  const handleProductChange = (newProduct: ProductModel) => {
-    updateProduct(newProduct);
-  };
-
-  const handleProductDelete = (id: number) => {
-    deleteProduct(id);
+    remove(`items/${id}`)
+      .then(() => fetchProducts())
+      .catch((error) => console.error("Error deleting product:", error));
   };
 
   return (
     <IonCardContent>
-      {isMounted ? (
+      {isExpanded && (
         <IonList>
-          {products.map((product) => {
-            return (
-              <ProductContainer
-                product={product}
-                onChange={(newProduct) => {
-                  handleProductChange(newProduct);
-                }}
-                onDelete={(id) => {
-                  handleProductDelete(id);
-                }}
-              />
-            );
-          })}
+          {products.map((product) => (
+            <ProductContainer
+              key={product.itemID}
+              product={product}
+              onChange={updateProduct}
+              onDelete={deleteProduct}
+            />
+          ))}
         </IonList>
-      ) : null}
-
+      )}
       <IonToolbar>
         <IonButton
-          onClick={() => setIsMounted(!isMounted)}
+          data-testid="toggle-expand-btn"
+          onClick={() => setIsExpanded((prev) => !prev)}
           fill="clear"
           expand="full"
           size="small"
           color="medium"
         >
-          {isMounted ? (
-            <IonIcon icon={arrowUpOutline} />
-          ) : (
-              <IonIcon icon={arrowDownOutline} />
-            )}
+          <IonIcon icon={isExpanded ? arrowUpOutline : arrowDownOutline} />
         </IonButton>
-        {isMounted ? (
+        {isExpanded && (
           <IonButton
-            onClick={() => {
-              handleAddProductClick();
-            }}
+            data-testid="add-product-btn"
+            onClick={addProduct}
             fill="clear"
             slot="end"
             size="large"
           >
             <IonIcon icon={addOutline} />
           </IonButton>
-        ) : null}
+        )}
       </IonToolbar>
     </IonCardContent>
   );
 };
 
-export default ProdctListConteiner;
+export default ProductListContainer;

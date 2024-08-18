@@ -1,42 +1,26 @@
 import {
   IonButton,
-  IonButtons,
   IonCard,
-  IonCardContent,
   IonCardHeader,
   IonCardTitle,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
   IonPopover,
   IonToolbar,
+  IonIcon,
 } from "@ionic/react";
-import {
-  add,
-  arrowDown,
-  arrowDownOutline,
-  arrowUpOutline,
-  menu,
-  thermometerOutline,
-} from "ionicons/icons";
-import React, { createRef, useEffect, useRef, useState } from "react";
+import { menu } from "ionicons/icons";
+import React, { useState } from "react";
 import useProtectedApi from "../../hooks/useProtectedApi";
 import ShopListModel from "../../models/ShopListsModel";
-import api from "../../Services/api";
 import ProductListcontainer from "../ProductList/ProdctListConteiner";
 
 interface Props {
   shopList: ShopListModel;
   onDelete: (shopList: ShopListModel) => void;
 }
+
 function ShopListContainer(props: Props) {
   const { remove } = useProtectedApi();
   const [shopList, setShopList] = useState(props.shopList);
-  const [isActive, setActive] = useState(true);
   const [popoverState, setShowPopover] = useState({
     showPopover: false,
     event: undefined,
@@ -65,22 +49,21 @@ function ShopListContainer(props: Props) {
               e.persist();
               setShowPopover({ showPopover: true, event: e });
             }}
+            data-testid="menu-button"
           >
             <IonIcon icon={menu} />
           </IonButton>
         </IonToolbar>
       </IonCardHeader>
 
-      <ProductListcontainer
-        isActive={isActive}
-        shopListID={shopList.shopListID}
-      />
+      <ProductListcontainer isActive={true} shopListID={shopList.shopListID} />
       <IonPopover
         isOpen={popoverState.showPopover}
         event={popoverState.event}
         onDidDismiss={() =>
           setShowPopover({ showPopover: false, event: undefined })
         }
+        data-testid="popover"
       >
         <IonButton
           fill="clear"
@@ -90,6 +73,7 @@ function ShopListContainer(props: Props) {
             handleDeleteListButtonClick();
             setShowPopover({ showPopover: false, event: undefined });
           }}
+          data-testid="delete-button"
         >
           Usuń
         </IonButton>
