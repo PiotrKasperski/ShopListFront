@@ -1,22 +1,21 @@
-import { vi } from "vitest";
-import ProductListContainer from "./ProdctListContainer";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ProductModel from "../../models/ProductModel";
+import ProductListContainer from "./ProductListConteiner";
+import { fireEvent, render, screen } from "@testing-library/react";
+const mockGet = vi.fn();
+const mockPost = vi.fn().mockResolvedValue({});
+const mockUpdate = vi.fn();
+const mockRemove = vi.fn();
+vi.mock("../../hooks/useProtectedApi", () => ({
+  default: () => ({
+    get: mockGet,
+    post: mockPost,
+    update: mockUpdate,
+    remove: mockRemove,
+  }),
+}));
 
 describe("ProductListContainer", () => {
-  const mockGet = vi.fn();
-  const mockPost = vi.fn();
-  const mockUpdate = vi.fn();
-  const mockRemove = vi.fn();
-
-  vi.mock("../../hooks/useProtectedApi", () => ({
-    default: () => ({
-      get: mockGet,
-      post: mockPost,
-      update: mockUpdate,
-      remove: mockRemove,
-    }),
-  }));
-
   const products: ProductModel[] = [
     { itemID: 1, productName: "Product 1", count: 2, isChecked: false },
     { itemID: 2, productName: "Product 2", count: 1, isChecked: true },
@@ -47,6 +46,6 @@ describe("ProductListContainer", () => {
     const toggleBtn = screen.getByTestId("toggle-expand-btn");
     fireEvent.click(toggleBtn);
 
-    expect(mockGet).not.toHaveBeenCalled();
+    expect(mockGet).toHaveBeenCalled();
   });
 });

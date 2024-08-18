@@ -11,7 +11,7 @@ import { menu } from "ionicons/icons";
 import React, { useState } from "react";
 import useProtectedApi from "../../hooks/useProtectedApi";
 import ShopListModel from "../../models/ShopListsModel";
-import ProductListcontainer from "../ProductList/ProdctListConteiner";
+import ProductListContainer from "../ProductList/ProductListConteiner";
 
 interface Props {
   shopList: ShopListModel;
@@ -56,7 +56,7 @@ function ShopListContainer(props: Props) {
         </IonToolbar>
       </IonCardHeader>
 
-      <ProductListcontainer isActive={true} shopListID={shopList.shopListID} />
+      <ProductListContainer isActive={true} shopListID={shopList.shopListID} />
       <IonPopover
         isOpen={popoverState.showPopover}
         event={popoverState.event}
