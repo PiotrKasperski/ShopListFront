@@ -28,7 +28,7 @@ import "./theme/variables.css";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import ShopListsContainer from "./components/ShopLists/ShopListsContainer";
 import UserComponent from "./components/Login/UserComponent";
-import { StatusBar } from "@capacitor/status-bar";
+import { StatusBar, StatusBarStyle } from "@capacitor/status-bar";
 import { basketOutline } from "ionicons/icons";
 import { useStorage, useStorageItem } from "@capacitor-community/storage-react";
 
@@ -48,7 +48,11 @@ const App: React.FC = () => {
     };
 
     if (StatusBar) {
+      StatusBar.setStyle({
+        style: StatusBarStyle.Dark,
+      });
       StatusBar.setOverlaysWebView({ overlay: true }).catch(console.log);
+      StatusBar.hide();
     }
 
     if (!token) initializeToken();
