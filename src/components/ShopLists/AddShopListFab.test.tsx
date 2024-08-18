@@ -33,32 +33,40 @@ describe("AddShopListFab", () => {
     {},
   );
 
-  it("calls onAddListClick with the correct list name", async () => {
-    const mockOnAddListClick = vi.fn();
-    customRender(<AddShopListFab onAddListClick={mockOnAddListClick} />);
+  it(
+    "calls onAddListClick with the correct list name",
+    async () => {
+      const mockOnAddListClick = vi.fn();
+      customRender(<AddShopListFab onAddListClick={mockOnAddListClick} />);
 
-    fireEvent.click(screen.getByTestId("open-modal-btn"));
+      fireEvent.click(screen.getByTestId("open-modal-btn"));
 
-    const input = await screen.findByPlaceholderText("Wprowadź nazwę");
-    fireEvent.change(input, {
-      target: { value: "My Shopping List" },
-    });
+      const input = await screen.findByPlaceholderText("Wprowadź nazwę");
+      fireEvent.change(input, {
+        target: { value: "My Shopping List" },
+      });
 
-    fireEvent.click(screen.getByTestId("add-list-btn"));
-    expect(mockOnAddListClick).toHaveBeenCalledWith("My Shopping List");
-  });
+      fireEvent.click(screen.getByTestId("add-list-btn"));
+      expect(mockOnAddListClick).toHaveBeenCalledWith("My Shopping List");
+    },
+    {},
+  );
 
-  it("does not call onAddListClick when input is empty", async () => {
-    const mockOnAddListClick = vi.fn();
-    customRender(<AddShopListFab onAddListClick={mockOnAddListClick} />);
+  it(
+    "does not call onAddListClick when input is empty",
+    async () => {
+      const mockOnAddListClick = vi.fn();
+      customRender(<AddShopListFab onAddListClick={mockOnAddListClick} />);
 
-    fireEvent.click(screen.getByTestId("open-modal-btn"));
-    const input = await screen.findByPlaceholderText("Wprowadź nazwę");
-    fireEvent.change(input, {
-      target: { value: "" },
-    });
+      fireEvent.click(screen.getByTestId("open-modal-btn"));
+      const input = await screen.findByPlaceholderText("Wprowadź nazwę");
+      fireEvent.change(input, {
+        target: { value: "" },
+      });
 
-    fireEvent.click(screen.getByTestId("add-list-btn"));
-    expect(mockOnAddListClick).not.toHaveBeenCalled();
-  });
+      fireEvent.click(screen.getByTestId("add-list-btn"));
+      expect(mockOnAddListClick).not.toHaveBeenCalled();
+    },
+    {},
+  );
 });
