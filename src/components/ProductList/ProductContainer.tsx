@@ -54,7 +54,7 @@ function ProductContainer(props: Props) {
         />
         <IonLabel>Ilość:</IonLabel>
         <IonInput
-          size={3}
+          maxlength={3}
           value={product.count}
           onIonChange={(e) => {
             handleCountChange(parseInt(e.detail.value!));
