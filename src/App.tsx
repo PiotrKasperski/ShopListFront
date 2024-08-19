@@ -76,10 +76,7 @@ const App: React.FC = () => {
   const handleOnRedirect = () => {
     setShowToast(true);
   };
-  const errorFallback = (error) => {
-    setMessage("ERROR");
-    return <></>;
-  };
+
   return (
     <IonApp>
       <IonHeader color="primary">
