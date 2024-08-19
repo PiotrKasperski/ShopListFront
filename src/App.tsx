@@ -105,6 +105,7 @@ const App: React.FC = () => {
             onDidDismiss={() => setShowToast(false)}
             message={message}
             duration={2000}
+            swipeGesture="vertical"
           />
         )}
         )
