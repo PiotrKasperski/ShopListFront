@@ -32,12 +32,14 @@ import UserComponent from "./components/Login/UserComponent";
 import { StatusBar, StatusBarStyle } from "@capacitor/status-bar";
 import { basketOutline } from "ionicons/icons";
 import { useStorage, useStorageItem } from "@capacitor-community/storage-react";
+import { ErrorBoundary } from "react-error-boundary";
 
 setupIonicReact();
 
 const App: React.FC = () => {
   const [token, setToken] = useStorageItem<string | null>("access_token");
   const [showToast, setShowToast] = useState(false);
+  const [message, setMessage] = useState("");
   const { get } = useStorage();
 
   useEffect(() => {
@@ -61,12 +63,23 @@ const App: React.FC = () => {
   useEffect(() => {
     console.log("Updated token:", token);
   }, [token]);
+  useEffect(() => {
+    console.log("set message");
+    if (message !== "") setShowToast(true);
+  }, [message]);
+  useEffect(() => {
+    console.log("set show toast", showToast);
+    if (!showToast) setMessage("");
+  }, [showToast]);
 
   const handleTokenUpdate = (newToken: string) => setToken(newToken);
   const handleOnRedirect = () => {
     setShowToast(true);
   };
-
+  const errorFallback = (error) => {
+    setMessage("ERROR");
+    return <></>;
+  };
   return (
     <IonApp>
       <IonHeader color="primary">
@@ -90,7 +103,7 @@ const App: React.FC = () => {
           <IonToast
             isOpen={showToast}
             onDidDismiss={() => setShowToast(false)}
-            message="Przed skorzystaniem należy się zalogować"
+            message={message}
             duration={2000}
           />
         )}
@@ -98,15 +111,15 @@ const App: React.FC = () => {
         <IonReactRouter>
           <IonRouterOutlet>
             <Route path="/dashboard">
-              <PrivateRoute
-                token={token || ""}
-                onRedirect={() => handleOnRedirect()}
-              >
+              <PrivateRoute token={token || ""} setMessage={setMessage}>
                 <ShopListsContainer />
               </PrivateRoute>
             </Route>
             <Route path="/users">
-              <UserComponent onToken={handleTokenUpdate} />
+              <UserComponent
+                onToken={handleTokenUpdate}
+                setMessage={setMessage}
+              />
             </Route>
             <Route exact path="/">
               <Redirect to="/dashboard" />
@@ -117,5 +130,4 @@ const App: React.FC = () => {
     </IonApp>
   );
 };
-
 export default App;

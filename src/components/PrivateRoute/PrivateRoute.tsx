@@ -6,9 +6,15 @@ type Props = {
   children?: React.ReactNode;
   token: string;
   onRedirect?: () => void;
+  setMessage?: (message: string) => void;
 };
 
-const PrivateRoute: React.FC<Props> = ({ children, token, onRedirect }) => {
+const PrivateRoute: React.FC<Props> = ({
+  children,
+  token,
+  onRedirect,
+  setMessage,
+}) => {
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
@@ -18,6 +24,7 @@ const PrivateRoute: React.FC<Props> = ({ children, token, onRedirect }) => {
         onRedirect();
         console.log("onRedirect");
       }
+      if (setMessage) setMessage("Przed skorzystaniem należy się zalogować");
     }
   }, [token, onRedirect]);
 
@@ -27,7 +34,7 @@ const PrivateRoute: React.FC<Props> = ({ children, token, onRedirect }) => {
         <IonToast
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
-          message="Przed skorzystaniem należy się zalogować"
+          message=""
           duration={2000}
         />
       )}

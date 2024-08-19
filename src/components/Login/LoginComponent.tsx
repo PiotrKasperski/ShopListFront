@@ -14,10 +14,14 @@ import {
   availableFeatures,
 } from "@capacitor-community/storage-react";
 import "./LoginComponent.css";
+import { AxiosError } from "axios";
 
-type LoginComponentProps = { setToken: (token: string) => void };
+type LoginComponentProps = {
+  setToken: (token: string) => void;
+  setMessage?: (message: string) => void;
+};
 
-const LoginComponent = ({ setToken }: LoginComponentProps) => {
+const LoginComponent = ({ setToken, setMessage }: LoginComponentProps) => {
   if (typeof setToken !== "function") {
     throw new Error("setToken must be a function");
   }
@@ -29,13 +33,33 @@ const LoginComponent = ({ setToken }: LoginComponentProps) => {
   const history = useHistory();
   const { login } = useAuth();
   const passwordInputRef = useRef<HTMLIonInputElement>(null);
+  const handleLoginError = (error: AxiosError) => {
+    let message = "";
+    console.log("Error handler", error.message);
+    if (error.message === "Network Error")
+      message = "Błąd połaczenia. Spróbuj ponownie za 10s";
+    if (error.code === "ERR_BAD_REQUEST")
+      message = "Błędne dane logowania. Popraw je i spróbuj ponownie";
+    if (setMessage && message !== "") setMessage(message);
+    console.log(message, error);
+  };
 
-  const handleLogin = () =>
-    login(credentials.name || "", credentials.token || "").then((token) => {
-      setCredentials((prev) => ({ ...prev, token }));
-      setToken(token);
-      history.push("/");
-    });
+  const handleLogin = () => {
+    try {
+      login(credentials.name || "", credentials.token || "")
+        .then((token) => {
+          console.log("sucess login", token);
+          setCredentials((prev) => ({ ...prev, token }));
+          setToken(token);
+          history.push("/");
+        })
+        .catch((error) => {
+          handleLoginError(error.message as AxiosError);
+        });
+    } catch (error) {
+      handleLoginError(error as AxiosError);
+    }
+  };
 
   return (
     <IonContent>

@@ -27,7 +27,7 @@ const useAuth = () => {
       userName: name,
       password: password,
     });
-    console.log("response token", response.data.access_token);
+    console.log("response token", response);
     await set("access_token", response.data.access_token);
     console.log("saved_token", await get("access_token"));
 
